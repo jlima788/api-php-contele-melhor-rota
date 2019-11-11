@@ -12,10 +12,19 @@ class RotasController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index($source, $target, $autonomy, $fuel_price)
     {
+        $path = Rota::dijkstra($source, $target, $autonomy, $fuel_price);
+
+        $vl_combustivel = array_shift($path);
+        $autonomia = array_shift($path);
+        $total = array_shift($path);
+
+        $custo = ( $total / $autonomia ) * $vl_combustivel;
+
         return response()->json([
-            'message'  => "OK",
+            'error' => false,
+            'message'  => "A melhor rota é: ".implode(", ", $path)." com custo de R$ {$custo}",
         ], 200);
     }
 
